@@ -25,6 +25,11 @@ static uint32_t s_tick_button;
 
 void app_main_init(void)
 {
+    s_tick = HAL_GetTick();
+    s_tick_usb_device = s_tick;
+    s_tick_usb_cdc_tx = s_tick;
+    s_tick_button     = s_tick;
+
     s_usb_cdc_buf_data_len = sprintf(( char *)s_usb_cdc_tx_buf,"STM32H562VGT6 Develop by Chimipupu\r\n");
 
     // ADC開始
@@ -34,11 +39,11 @@ void app_main_init(void)
 
 void app_main(void)
 {
+    RTC_DateTypeDef sdatestructureget;
+    RTC_TimeTypeDef stimestructureget;
     static uint8_t s_prev_seconds ;
+
     s_tick = HAL_GetTick();
-    s_tick_usb_device = s_tick;
-    s_tick_usb_cdc_tx = s_tick;
-    s_tick_button     = s_tick;
 
     // USBデバイス処理(1ms周期)
     if(s_tick >= s_tick_usb_device) {
@@ -54,9 +59,6 @@ void app_main(void)
             s_usb_cdc_buf_data_len = sprintf(( char *)s_usb_cdc_tx_buf,"Key Pressed\r\n");
         } else {
             s_tick_button = s_tick + 500;
-            RTC_DateTypeDef sdatestructureget;
-            RTC_TimeTypeDef stimestructureget;
-            int text_lenth;
 
             /* Get the RTC current Time */
             HAL_RTC_GetTime(&hrtc, &stimestructureget, RTC_FORMAT_BIN);
