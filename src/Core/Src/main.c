@@ -29,6 +29,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "board.h"
+#include "app_main.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,7 +61,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint16_t adc_inp;
+
 /* USER CODE END 0 */
 
 /**
@@ -117,111 +118,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	HAL_ADCEx_Calibration_Start(&hadc2,ADC_SINGLE_ENDED);
-	HAL_ADC_Start_DMA(&hadc2,(uint32_t *)&adc_inp,1);
-	
-	uint32_t tick = HAL_GetTick();
-	uint32_t tick_usb = tick;
-	uint32_t tick_usb_tx = tick;
-	uint32_t tick_button = tick;
-	
-	uint8_t txbuf[50]; 
-	ULONG length;
-	ULONG actual_length;
-	length = sprintf(( char *)txbuf,"Hello! WeAct Studio\r\n");
-	UINT write_state = UX_STATE_RESET;
-	UINT ux_status = UX_STATE_RESET;
+  app_main_init();
+
   while (1)
   {
-		tick = HAL_GetTick();
-		if(tick >= tick_usb)
-		{
-			tick_usb = tick + 1;
-			ux_device_stack_tasks_run();
-		}
-		
-		if(tick >= tick_button)
-		{
-			if(board_button_getstate())
-			{
-				tick_button = tick + 100;
-				board_led_toggle();
-				length = sprintf(( char *)txbuf,"Key Pressed\r\n");
-			}
-			else
-			{
-				tick_button = tick + 500;
-				RTC_DateTypeDef sdatestructureget;
-        RTC_TimeTypeDef stimestructureget;
-        static uint8_t Seconds_o;
-        int text_lenth;
-        
-        /* Get the RTC current Time */
-        HAL_RTC_GetTime(&hrtc, &stimestructureget, RTC_FORMAT_BIN);
-        /* Get the RTC current Date */
-        HAL_RTC_GetDate(&hrtc, &sdatestructureget, RTC_FORMAT_BIN);
-        
-        if(Seconds_o != stimestructureget.Seconds)
-        {
-          Seconds_o = stimestructureget.Seconds;
-          
-          board_led_set(1);
-          
-          length = sprintf((char *) &txbuf,"20%02d.%02d.%02d %02d:%02d:%02d ,%dmV\r\n",sdatestructureget.Year,sdatestructureget.Month,sdatestructureget.Date, \
-                                            stimestructureget.Hours,stimestructureget.Minutes,stimestructureget.Seconds,(((uint32_t)adc_inp)*3300)>>10);
-        }
-        else
-        {
-          board_led_set(0);
-        }
-			}
-		}
-		
-		if(tick >= tick_usb_tx)
-		{
-			tick_usb_tx = tick + 1;
-			
-			extern UX_SLAVE_CLASS_CDC_ACM  *cdc_acm;
-			if(cdc_acm != UX_NULL)
-			{
-				switch(write_state)
-				{
-				case UX_STATE_RESET:
-
-					ux_status = ux_device_class_cdc_acm_write_run(cdc_acm, txbuf,length, &actual_length);
-						
-					if (ux_status != UX_STATE_WAIT)
-					{
-						/* Reset state.  */
-						write_state = UX_STATE_RESET;
-						break;
-					}
-					write_state = UX_STATE_WAIT;
-					break;
-						
-				case UX_STATE_WAIT:    	
-					/* Continue to run state machine.  */
-					ux_status = ux_device_class_cdc_acm_write_run(cdc_acm, UX_NULL, 0, &actual_length);
-					/* Check if there is  fatal error.  */
-					if (ux_status < UX_STATE_IDLE)
-					{
-						/* Reset state.  */
-						write_state = UX_STATE_RESET;
-						break;
-					}
-					/* Check if dataset is transmitted */
-					if (ux_status <= UX_STATE_NEXT)
-					{
-						write_state = UX_STATE_RESET;
-						tick_usb_tx = tick + 1000;
-					}
-					/* Keep waiting.  */
-					break;
-				default:
-					break;
-				}
-			}
-		}
+    app_main();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

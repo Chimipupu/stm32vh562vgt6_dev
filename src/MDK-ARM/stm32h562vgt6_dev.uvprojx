@@ -48,7 +48,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>01-RTC\</OutputDirectory>
+          <OutputDirectory>.\obj\</OutputDirectory>
           <OutputName>stm32h562vgt6_dev</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>UX_INCLUDE_USER_DEFINE_FILE,USE_HAL_DRIVER,STM32H562xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../USBX/App;../USBX/Target;../Drivers/STM32H5xx_HAL_Driver/Inc;../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H5xx/Include;../Middlewares/ST/usbx/common/core/inc;../Middlewares/ST/usbx/ports/generic/inc;../Middlewares/ST/usbx/common/usbx_stm32_device_controllers;../Middlewares/ST/usbx/common/usbx_device_classes/inc;../Drivers/CMSIS/Include;../Bsp</IncludePath>
+              <IncludePath>../Core/Inc;../USBX/App;../USBX/Target;../Drivers/STM32H5xx_HAL_Driver/Inc;../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H5xx/Include;../Middlewares/ST/usbx/common/core/inc;../Middlewares/ST/usbx/ports/generic/inc;../Middlewares/ST/usbx/common/usbx_stm32_device_controllers;../Middlewares/ST/usbx/common/usbx_device_classes/inc;../Drivers/CMSIS/Include;../Bsp;..\App</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1155,6 +1155,16 @@
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Bsp\board.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MyApp</GroupName>
+          <Files>
+            <File>
+              <FileName>app_main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\app_main.c</FilePath>
             </File>
           </Files>
         </Group>
