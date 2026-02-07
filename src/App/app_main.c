@@ -9,6 +9,7 @@
  * 
  */
 #include "app_main.h"
+#include "app_util.h"
 
 extern UX_SLAVE_CLASS_CDC_ACM  *cdc_acm;
 
@@ -23,6 +24,39 @@ static uint32_t s_tick_usb_device;
 static uint32_t s_tick_usb_cdc_tx;
 static uint32_t s_tick_button;
 
+#ifdef DBG_APP
+volatile const uint32_t g_ref_val = 0x12345678;
+volatile const uint32_t g_rev_exp_val = 0x78563412;
+volatile const uint32_t g_rev16_exp_val = 0x34127856;
+static void dbg_mcu_test(void);
+
+static void dbg_mcu_test(void)
+{
+    DWT_Init();
+
+    volatile uint32_t start_cycles, end_cycles, total_cycles;
+    volatile uint32_t rev_val, rev16_val;
+
+    // CPUサイクル取得 @開始
+    start_cycles = DWT_GetCPUCycleCount();
+
+    // [H/W(CPU)でのエンディアン変換テスト]
+    rev_val   = HW_Endian_32bit(g_ref_val); // 期待値: 0x78563412
+    rev16_val = HW_Endian_16bit(g_ref_val); // 期待値: 0x34127856
+
+    // CPUサイクル取得 @終了
+    end_cycles = DWT_GetCPUCycleCount();
+    total_cycles = end_cycles - start_cycles;
+
+    // テスト結果確認
+    if((rev_val != g_rev_exp_val) || (rev16_val != g_rev16_exp_val)) {
+        __BKPT(0); // テストNG
+    } else {
+        __BKPT(1); // テストOK
+    }
+}
+#endif // DBG_APP
+
 void app_main_init(void)
 {
     s_tick = HAL_GetTick();
@@ -35,6 +69,10 @@ void app_main_init(void)
     // ADC開始
     HAL_ADCEx_Calibration_Start(&hadc2,ADC_SINGLE_ENDED);
     HAL_ADC_Start_DMA(&hadc2,(uint32_t *)&s_adc_val,1);
+
+#ifdef DBG_APP
+    dbg_mcu_test();
+#endif // DBG_APP
 }
 
 void app_main(void)
@@ -57,7 +95,9 @@ void app_main(void)
             s_tick_button = s_tick + 100;
             board_led_toggle();
             s_usb_cdc_buf_data_len = sprintf(( char *)s_usb_cdc_tx_buf,"Key Pressed\r\n");
-        } else {
+        }
+        // 500ms毎にRTCを更新
+        else {
             s_tick_button = s_tick + 500;
 
             /* Get the RTC current Time */
@@ -65,7 +105,8 @@ void app_main(void)
             /* Get the RTC current Date */
             HAL_RTC_GetDate(&hrtc, &sdatestructureget, RTC_FORMAT_BIN);
 
-            if(s_prev_seconds  != stimestructureget.Seconds) {
+            // 1秒おきにRTCの時刻を表示
+            if(s_prev_seconds != stimestructureget.Seconds) {
                 s_prev_seconds  = stimestructureget.Seconds;
                 board_led_set(1);
                 s_usb_cdc_buf_data_len = sprintf((char *) &s_usb_cdc_tx_buf,

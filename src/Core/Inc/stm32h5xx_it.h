@@ -56,7 +56,10 @@ void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 void GPDMA1_Channel0_IRQHandler(void);
+void I2C1_EV_IRQHandler(void);
+void LPUART1_IRQHandler(void);
 void USB_DRD_FS_IRQHandler(void);
+void SPI6_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

@@ -82,11 +82,11 @@ void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-  // NOTE: RTCã®æ—¥ä»˜ã®åˆæœŸå€¤ã‚’é–‹ç™ºã‚’é–‹å§‹ã—ãŸæ—¥ä»˜(2026/2/4)ã«ã—ã¦ãŠã
+  // NOTE: RTC‚Ì“ú•t‚Ì‰Šú’l‚ðŠJ”­‚ðŠJŽn‚µ‚½“ú•t(2026/2/4)‚É‚µ‚Ä‚¨‚­
   sDate.Year = 26; // 2026
   sDate.Month = 2; // 2
   sDate.Date = 4;  // 4
-  sDate.WeekDay = RTC_WEEKDAY_WEDNESDAY; // æ°´æ›œæ—¥
+  sDate.WeekDay = RTC_WEEKDAY_WEDNESDAY; // …—j“ú
 
   if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
   {
