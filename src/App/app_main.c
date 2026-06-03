@@ -3,17 +3,15 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief アプリメインのヘッダ
  * @version 0.1
- * @date 2026-02-04
- * 
- * @copyright Copyright (c) 2025 Chimipupu All Rights Reserved.
- * 
+ * @date 2026-06-04
+ * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  */
+
 #include "app_main.h"
 #include "app_util.h"
 
 extern UX_SLAVE_CLASS_CDC_ACM  *cdc_acm;
 
-static uint16_t s_adc_val;
 static uint8_t s_usb_cdc_tx_buf[64];
 static uint32_t s_usb_cdc_buf_data_len;
 static unsigned long s_actual_length;
@@ -66,10 +64,6 @@ void app_main_init(void)
 
     s_usb_cdc_buf_data_len = sprintf(( char *)s_usb_cdc_tx_buf,"STM32H562VGT6 Develop by Chimipupu\r\n");
 
-    // ADC開始
-    HAL_ADCEx_Calibration_Start(&hadc2,ADC_SINGLE_ENDED);
-    HAL_ADC_Start_DMA(&hadc2,(uint32_t *)&s_adc_val,1);
-
 #ifdef DBG_APP
     dbg_mcu_test();
 #endif // DBG_APP
@@ -110,10 +104,9 @@ void app_main(void)
                 s_prev_seconds  = stimestructureget.Seconds;
                 board_led_set(1);
                 s_usb_cdc_buf_data_len = sprintf((char *) &s_usb_cdc_tx_buf,
-                                                "20%02d.%02d.%02d %02d:%02d:%02d ,%dmV\r\n",
+                                                "20%02d.%02d.%02d %02d:%02d:%02d\r\n",
                                                 sdatestructureget.Year,sdatestructureget.Month,sdatestructureget.Date, \
-                                                stimestructureget.Hours,stimestructureget.Minutes,stimestructureget.Seconds, \
-                                                (((uint32_t)s_adc_val)*3300)>>10);
+                                                stimestructureget.Hours,stimestructureget.Minutes,stimestructureget.Seconds);
             } else {
                 board_led_set(0);
             }

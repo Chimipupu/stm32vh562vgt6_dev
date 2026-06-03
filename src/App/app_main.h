@@ -3,11 +3,10 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief アプリメインのヘッダ
  * @version 0.1
- * @date 2026-02-04
- * 
- * @copyright Copyright (c) 2025 Chimipupu All Rights Reserved.
- * 
+ * @date 2026-06-04
+ * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  */
+
 #ifndef APP_MAIN_H
 #define APP_MAIN_H
 
@@ -21,7 +20,6 @@
 
 // BSP
 #include "main.h"
-#include "adc.h"
 #include "gpdma.h"
 #include "icache.h"
 #include "rtc.h"

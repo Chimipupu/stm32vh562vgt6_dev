@@ -82,11 +82,10 @@ void MX_RTC_Init(void)
   {
     Error_Handler();
   }
-  // NOTE: RTCの日付の初期値を開発を開始した日付(2026/2/4)にしておく
-  sDate.Year = 26; // 2026
-  sDate.Month = 2; // 2
-  sDate.Date = 4;  // 4
-  sDate.WeekDay = RTC_WEEKDAY_WEDNESDAY; // 水曜日
+  sDate.WeekDay = RTC_WEEKDAY_FRIDAY;
+  sDate.Month = RTC_MONTH_AUGUST;
+  sDate.Date = 1;
+  sDate.Year = 25;
 
   if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
   {
@@ -146,3 +145,4 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* rtcHandle)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
+

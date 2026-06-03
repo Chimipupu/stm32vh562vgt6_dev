@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "adc.h"
 #include "gpdma.h"
 #include "i2c.h"
 #include "icache.h"
@@ -26,7 +25,7 @@
 #include "rtc.h"
 #include "spi.h"
 #include "usb.h"
-#include "app_usbx_device.h"
+#include "app_usbx.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -102,8 +101,7 @@ int main(void)
   MX_GPIO_Init();
   MX_GPDMA1_Init();
   MX_RTC_Init();
-  MX_USBX_Device_Init();
-  MX_ADC2_Init();
+  MX_USBX_Init();
   MX_ICACHE_Init();
   MX_I2C1_Init();
   MX_LPUART1_UART_Init();
