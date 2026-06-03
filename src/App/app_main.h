@@ -20,14 +20,6 @@
 
 // ST Lib
 
-// MyApp Lib
-
-// --------------------------------------------------------------------------
-// [コンパイルスイッチ]
-#define DBG_APP
-// #define DEBUG_PRINT_USB_CDC
-// --------------------------------------------------------------------------
-
 // BSP
 #include "main.h"
 #include "gpdma.h"
@@ -35,10 +27,12 @@
 #include "rtc.h"
 #include "gpio.h"
 #include "board.h"
-#ifdef DEBUG_PRINT_USB_CDC
-#include "usb.h"
-#include "app_usbx_device.h"
-#endif // DEBUG_PRINT_USB_CDC
+
+// MyApp Lib
+
+// --------------------------------------------------------------------------
+// [コンパイルスイッチ]
+#define DBG_APP
 
 // --------------------------------------------------------------------------
 void app_main_init(void);

@@ -55,11 +55,9 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern DMA_HandleTypeDef handle_GPDMA1_Channel0;
 extern I2C_HandleTypeDef hi2c1;
-extern UART_HandleTypeDef hlpuart1;
 extern SPI_HandleTypeDef hspi6;
-extern PCD_HandleTypeDef hpcd_USB_DRD_FS;
+extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -203,20 +201,6 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles GPDMA1 Channel 0 global interrupt.
-  */
-void GPDMA1_Channel0_IRQHandler(void)
-{
-  /* USER CODE BEGIN GPDMA1_Channel0_IRQn 0 */
-
-  /* USER CODE END GPDMA1_Channel0_IRQn 0 */
-  HAL_DMA_IRQHandler(&handle_GPDMA1_Channel0);
-  /* USER CODE BEGIN GPDMA1_Channel0_IRQn 1 */
-
-  /* USER CODE END GPDMA1_Channel0_IRQn 1 */
-}
-
-/**
   * @brief This function handles I2C1 Event interrupt.
   */
 void I2C1_EV_IRQHandler(void)
@@ -231,31 +215,17 @@ void I2C1_EV_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles LPUART1 global interrupt.
+  * @brief This function handles USART1 global interrupt.
   */
-void LPUART1_IRQHandler(void)
+void USART1_IRQHandler(void)
 {
-  /* USER CODE BEGIN LPUART1_IRQn 0 */
+  /* USER CODE BEGIN USART1_IRQn 0 */
 
-  /* USER CODE END LPUART1_IRQn 0 */
-  HAL_UART_IRQHandler(&hlpuart1);
-  /* USER CODE BEGIN LPUART1_IRQn 1 */
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
 
-  /* USER CODE END LPUART1_IRQn 1 */
-}
-
-/**
-  * @brief This function handles USB FS global interrupt.
-  */
-void USB_DRD_FS_IRQHandler(void)
-{
-  /* USER CODE BEGIN USB_DRD_FS_IRQn 0 */
-
-  /* USER CODE END USB_DRD_FS_IRQn 0 */
-  HAL_PCD_IRQHandler(&hpcd_USB_DRD_FS);
-  /* USER CODE BEGIN USB_DRD_FS_IRQn 1 */
-
-  /* USER CODE END USB_DRD_FS_IRQn 1 */
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /**
