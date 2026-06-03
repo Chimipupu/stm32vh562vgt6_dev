@@ -11,8 +11,6 @@
 #include "app_util.h"
 
 // --------------------------------------------------------------------------
-static uint8_t s_printf_data_buf[256];
-static uint32_t s_printf_data_length;
 static uint32_t s_tick_button;
 static uint32_t s_tick;
 
@@ -31,19 +29,24 @@ static bool _mcu_test(void)
 {
     DWT_Init();
 
-    // volatile uint32_t start_cycles, end_cycles, total_cycles;
+    volatile uint32_t start_cycles, end_cycles, total_cycles;
     volatile uint32_t rev_val, rev16_val;
 
+    printf("Start MCU Test\r\n");
+
     // CPUサイクル取得 @開始
-    // start_cycles = DWT_GetCPUCycleCount();
+    start_cycles = DWT_GetCPUCycleCount();
 
     // [H/W(CPU)でのエンディアン変換テスト]
     rev_val   = HW_Endian_32bit(g_ref_val); // 期待値: 0x78563412
     rev16_val = HW_Endian_16bit(g_ref_val); // 期待値: 0x34127856
 
+    printf("End MCU Test\r\n");
+
     // CPUサイクル取得 @終了
-    // end_cycles = DWT_GetCPUCycleCount();
-    // total_cycles = end_cycles - start_cycles;
+    end_cycles = DWT_GetCPUCycleCount();
+    total_cycles = end_cycles - start_cycles;
+    printf("Total CPU Cycle = %d\r\n", total_cycles);
 
     // テスト結果確認
     if((rev_val != g_rev_exp_val) || (rev16_val != g_rev16_exp_val)) {
@@ -56,10 +59,9 @@ static bool _mcu_test(void)
 
 void app_main_init(void)
 {
-    memset(s_printf_data_buf, 0, sizeof(s_printf_data_buf));
     s_tick = HAL_GetTick();
 
-    s_printf_data_length = sprintf(( char *)s_printf_data_buf,"STM32H562VGT6 Develop by Chimipupu\r\n");
+    printf("STM32H562VGT6 Develop by Chimipupu\r\n");
 
 #ifdef DBG_APP
     _mcu_test();
@@ -79,7 +81,7 @@ void app_main(void)
         if(board_button_getstate()) {
             s_tick_button = s_tick + 100;
             board_led_toggle();
-            s_printf_data_length = sprintf((char *)s_printf_data_buf, "Key Pressed\r\n");
+            printf("Key Pressed\r\n");
         }
         // 500ms毎にRTCを更新
         else {
@@ -94,10 +96,9 @@ void app_main(void)
             if(s_prev_seconds != stimestructureget.Seconds) {
                 s_prev_seconds  = stimestructureget.Seconds;
                 board_led_set(1);
-                s_printf_data_length = sprintf((char *) &s_printf_data_buf,
-                                                "20%02d.%02d.%02d %02d:%02d:%02d\r\n",
-                                                sdatestructureget.Year,sdatestructureget.Month,sdatestructureget.Date, \
-                                                stimestructureget.Hours,stimestructureget.Minutes,stimestructureget.Seconds);
+                printf("RTC: 20%02d/%02d/%02d %02d:%02d:%02d\r\n",
+                       sdatestructureget.Year,sdatestructureget.Month,sdatestructureget.Date, \
+                       stimestructureget.Hours,stimestructureget.Minutes,stimestructureget.Seconds);
             } else {
                 board_led_set(0);
             }

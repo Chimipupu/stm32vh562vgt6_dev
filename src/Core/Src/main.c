@@ -66,6 +66,13 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+// printf()をUARTにポーティング
+int __io_putchar(int ch)
+{
+  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+  return ch;
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -108,6 +115,9 @@ int main(void)
   MX_DCACHE1_Init();
   MX_RNG_Init();
   /* USER CODE BEGIN 2 */
+
+  // printf()をUARTにポーティング
+  setbuf(stdout, NULL);
 
 	board_led_init();
 	board_button_init();
