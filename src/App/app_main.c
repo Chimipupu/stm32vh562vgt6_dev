@@ -10,62 +10,75 @@
 #include "app_main.h"
 #include "app_util.h"
 
+// --------------------------------------------------------------------------
+#ifdef DEBUG_PRINT_USB_CDC
 extern UX_SLAVE_CLASS_CDC_ACM  *cdc_acm;
-
-static uint8_t s_usb_cdc_tx_buf[64];
-static uint32_t s_usb_cdc_buf_data_len;
-static unsigned long s_actual_length;
-static uint32_t s_step = UX_STATE_RESET;
+static uint32_t s_usb_cdc_step = UX_STATE_RESET;
 static uint32_t ux_status = UX_STATE_RESET;
-static uint32_t s_tick;
 static uint32_t s_tick_usb_device;
 static uint32_t s_tick_usb_cdc_tx;
+#endif // DEBUG_PRINT_USB_CDC
+
+static uint8_t s_printf_data_buf[256];
+static uint32_t s_printf_data_length;
+static unsigned long s_actual_length;
 static uint32_t s_tick_button;
+static uint32_t s_tick;
 
 #ifdef DBG_APP
-volatile const uint32_t g_ref_val = 0x12345678;
-volatile const uint32_t g_rev_exp_val = 0x78563412;
-volatile const uint32_t g_rev16_exp_val = 0x34127856;
-static void dbg_mcu_test(void);
+static const uint32_t g_ref_val = 0x12345678;
+static const uint32_t g_rev_exp_val = 0x78563412;
+static const uint32_t g_rev16_exp_val = 0x34127856;
+static bool _mcu_test(void);
+#endif // DBG_APP
 
-static void dbg_mcu_test(void)
+// --------------------------------------------------------------------------
+// [Static]
+
+#ifdef DBG_APP
+static bool _mcu_test(void)
 {
     DWT_Init();
 
-    volatile uint32_t start_cycles, end_cycles, total_cycles;
+    // volatile uint32_t start_cycles, end_cycles, total_cycles;
     volatile uint32_t rev_val, rev16_val;
 
     // CPUサイクル取得 @開始
-    start_cycles = DWT_GetCPUCycleCount();
+    // start_cycles = DWT_GetCPUCycleCount();
 
     // [H/W(CPU)でのエンディアン変換テスト]
     rev_val   = HW_Endian_32bit(g_ref_val); // 期待値: 0x78563412
     rev16_val = HW_Endian_16bit(g_ref_val); // 期待値: 0x34127856
 
     // CPUサイクル取得 @終了
-    end_cycles = DWT_GetCPUCycleCount();
-    total_cycles = end_cycles - start_cycles;
+    // end_cycles = DWT_GetCPUCycleCount();
+    // total_cycles = end_cycles - start_cycles;
 
     // テスト結果確認
     if((rev_val != g_rev_exp_val) || (rev16_val != g_rev16_exp_val)) {
-        __BKPT(0); // テストNG
+        return false; // テストNG
     } else {
-        __BKPT(1); // テストOK
+        return true; // テストOK
     }
 }
 #endif // DBG_APP
 
 void app_main_init(void)
 {
+    s_actual_length = 0;
+    memset(s_printf_data_buf, 0, sizeof(s_printf_data_buf));
     s_tick = HAL_GetTick();
+
+#ifdef DEBUG_PRINT_USB_CDC
     s_tick_usb_device = s_tick;
     s_tick_usb_cdc_tx = s_tick;
     s_tick_button     = s_tick;
 
-    s_usb_cdc_buf_data_len = sprintf(( char *)s_usb_cdc_tx_buf,"STM32H562VGT6 Develop by Chimipupu\r\n");
+    s_printf_data_length = sprintf(( char *)s_printf_data_buf,"STM32H562VGT6 Develop by Chimipupu\r\n");
+#endif // DEBUG_PRINT_USB_CDC
 
 #ifdef DBG_APP
-    dbg_mcu_test();
+    _mcu_test();
 #endif // DBG_APP
 }
 
@@ -77,18 +90,20 @@ void app_main(void)
 
     s_tick = HAL_GetTick();
 
+#ifdef DEBUG_PRINT_USB_CDC
     // USBデバイス処理(1ms周期)
     if(s_tick >= s_tick_usb_device) {
         s_tick_usb_device = s_tick + 1;
         ux_device_stack_tasks_run();
     }
+#endif // DEBUG_PRINT_USB_CDC
 
-    // ボタンポーリング処理(100ms周期)
+    // 基板のボタンをポーリング(100ms周期)
     if(s_tick >= s_tick_button) {
         if(board_button_getstate()) {
             s_tick_button = s_tick + 100;
             board_led_toggle();
-            s_usb_cdc_buf_data_len = sprintf(( char *)s_usb_cdc_tx_buf,"Key Pressed\r\n");
+            s_printf_data_length = sprintf((char *)s_printf_data_buf, "Key Pressed\r\n");
         }
         // 500ms毎にRTCを更新
         else {
@@ -103,7 +118,7 @@ void app_main(void)
             if(s_prev_seconds != stimestructureget.Seconds) {
                 s_prev_seconds  = stimestructureget.Seconds;
                 board_led_set(1);
-                s_usb_cdc_buf_data_len = sprintf((char *) &s_usb_cdc_tx_buf,
+                s_printf_data_length = sprintf((char *) &s_printf_data_buf,
                                                 "20%02d.%02d.%02d %02d:%02d:%02d\r\n",
                                                 sdatestructureget.Year,sdatestructureget.Month,sdatestructureget.Date, \
                                                 stimestructureget.Hours,stimestructureget.Minutes,stimestructureget.Seconds);
@@ -113,19 +128,21 @@ void app_main(void)
         }
     }
 
+#ifdef DEBUG_PRINT_USB_CDC
     // USB CDC送信処理(1ms or 1000ms周期)
     if(s_tick >= s_tick_usb_cdc_tx) {
         s_tick_usb_cdc_tx = s_tick + 1;
         if(cdc_acm != UX_NULL) {
-            switch(s_step)
+            switch(s_usb_cdc_step)
             {
                 case UX_STATE_RESET:
-                    ux_status = ux_device_class_cdc_acm_write_run(cdc_acm, s_usb_cdc_tx_buf,s_usb_cdc_buf_data_len, &s_actual_length);
+                    ux_status = ux_device_class_cdc_acm_write_run(cdc_acm, s_printf_data_buf, s_printf_data_length, &s_actual_length);
                     if (ux_status != UX_STATE_WAIT) {
-                        s_step = UX_STATE_RESET;
+                        s_usb_cdc_step = UX_STATE_RESET;
+                        memset(s_printf_data_buf, 0, sizeof(s_printf_data_buf));
                         break;
                     }
-                    s_step = UX_STATE_WAIT;
+                    s_usb_cdc_step = UX_STATE_WAIT;
                     break;
 
                 case UX_STATE_WAIT:
@@ -134,12 +151,12 @@ void app_main(void)
                     /* Check if there is  fatal error.  */
                     if (ux_status < UX_STATE_IDLE) {
                         /* Reset state.  */
-                        s_step = UX_STATE_RESET;
+                        s_usb_cdc_step = UX_STATE_RESET;
                         break;
                     }
                     /* Check if dataset is transmitted */
                     if (ux_status <= UX_STATE_NEXT) {
-                        s_step = UX_STATE_RESET;
+                        s_usb_cdc_step = UX_STATE_RESET;
                         s_tick_usb_cdc_tx = s_tick + 1000;
                     }
                     /* Keep waiting.  */
@@ -150,4 +167,5 @@ void app_main(void)
             }
         }
     }
+#endif // DEBUG_PRINT_USB_CDC
 }

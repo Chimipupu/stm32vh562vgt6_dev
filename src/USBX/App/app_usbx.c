@@ -56,9 +56,7 @@ UINT MX_USBX_Init(VOID)
   if (MX_USBX_Device_Init() != UX_SUCCESS)
   {
   /* USER CODE BEGIN MX_USBX_Device_Init_Error */
-    while(1)
-    {
-    }
+    // NOP
   /* USER CODE END MX_USBX_Device_Init_Error */
   }
 

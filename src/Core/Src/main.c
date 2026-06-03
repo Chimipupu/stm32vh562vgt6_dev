@@ -101,13 +101,17 @@ int main(void)
   MX_GPIO_Init();
   MX_GPDMA1_Init();
   MX_RTC_Init();
-  MX_USBX_Init();
+  // MX_USBX_Init();
   MX_ICACHE_Init();
   MX_I2C1_Init();
   MX_LPUART1_UART_Init();
   MX_SPI6_Init();
   /* USER CODE BEGIN 2 */
 	MX_USB_PCD_Init();
+
+#ifdef DEBUG_PRINT_USB_CDC
+  MX_USBX_Init();
+
 	/* Set Rx and Tx FIFO */
 	HAL_PCDEx_PMAConfig(&hpcd_USB_DRD_FS, 0x00, PCD_SNG_BUF, 0x14);
   HAL_PCDEx_PMAConfig(&hpcd_USB_DRD_FS, 0x80, PCD_SNG_BUF, 0x54);
@@ -116,9 +120,9 @@ int main(void)
   HAL_PCDEx_PMAConfig(&hpcd_USB_DRD_FS, 0x82, PCD_SNG_BUF, 0x114);
 
   ux_dcd_stm32_initialize((ULONG)USB_DRD_FS, (ULONG)&hpcd_USB_DRD_FS);
-
 	/* Start the USB device */
 	HAL_PCD_Start(&hpcd_USB_DRD_FS);
+#endif
 	
 	board_led_init();
 	board_button_init();
