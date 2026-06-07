@@ -26,7 +26,7 @@
 #define PCB_BUTTON_PORT    GPIOC
 #define PCB_BUTTON_PIN     GPIO_PIN_13
 
-#define UART_BAUD         115200
+#define UART_BAUD         921600
 #endif // PCB_WEACT_STM32H562VGT6
 
 // -----------------------------------------------------------

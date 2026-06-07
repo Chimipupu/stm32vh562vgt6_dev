@@ -25,14 +25,14 @@
     - LPUART
       - TX: PA9ピン
       - RX: PA10ピン
-      - 115200bps 8N1
+      - 921600bps 8N1
 
 ## メモリ使用量
 
 ```shell
 [build] Memory region         Used Size  Region Size  %age Used
 [build]              RAM:       13968 B       640 KB      2.13%
-[build]            FLASH:       34232 B         1 MB      3.26%
+[build]            FLASH:       34480 B         1 MB      3.29%
 [build]          BK_SRAM:           4 B         4 KB      0.10%
 ```
 

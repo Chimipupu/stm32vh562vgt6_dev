@@ -63,11 +63,15 @@ void MX_LPUART1_UART_Init(void)
   GPIO_InitStruct.Alternate = LL_GPIO_AF_3;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+  /* LPUART1 interrupt Init */
+  NVIC_SetPriority(LPUART1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
+  NVIC_EnableIRQ(LPUART1_IRQn);
+
   /* USER CODE BEGIN LPUART1_Init 1 */
 
   /* USER CODE END LPUART1_Init 1 */
   LPUART_InitStruct.PrescalerValue = LL_LPUART_PRESCALER_DIV1;
-  LPUART_InitStruct.BaudRate = 115200;
+  LPUART_InitStruct.BaudRate = 921600;
   LPUART_InitStruct.DataWidth = LL_LPUART_DATAWIDTH_8B;
   LPUART_InitStruct.StopBits = LL_LPUART_STOPBITS_1;
   LPUART_InitStruct.Parity = LL_LPUART_PARITY_NONE;

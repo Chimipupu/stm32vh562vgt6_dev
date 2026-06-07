@@ -177,6 +177,21 @@ void I2C1_EV_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles LPUART1 global interrupt.
+  */
+void LPUART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN LPUART1_IRQn 0 */
+
+  lpuart1_irq_handler();
+
+  /* USER CODE END LPUART1_IRQn 0 */
+  /* USER CODE BEGIN LPUART1_IRQn 1 */
+
+  /* USER CODE END LPUART1_IRQn 1 */
+}
+
+/**
   * @brief This function handles SPI6 global interrupt.
   */
 void SPI6_IRQHandler(void)
