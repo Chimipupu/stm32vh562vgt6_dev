@@ -104,14 +104,9 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN defaultTask */
-  app_main_init();
+  app_main_init(); // アプリメインタスクを生成
 
-  /* Infinite loop */
-  for(;;)
-  {
-    app_main();
-    osDelay(1000);
-  }
+  vTaskSuspend(NULL); // このタスクはここでお終い
   /* USER CODE END defaultTask */
 }
 

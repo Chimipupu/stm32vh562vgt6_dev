@@ -32,6 +32,7 @@
 #define DBG_APP
 
 // --------------------------------------------------------------------------
+// [Define]
 #ifndef KEY_Pin
 #define KEY_Pin GPIO_PIN_13
 #endif
@@ -44,11 +45,12 @@
 #ifndef LED_GPIO_Port
 #define LED_GPIO_Port GPIOB
 #endif
-
+// --------------------------------------------------------------------------
+// [FreeRTOS関連]
+extern osThreadId_t AppMainTaskHandle;
+extern const osThreadAttr_t AppMainTask_Attr;
 // --------------------------------------------------------------------------
 void app_main_init(void);
-void app_main(void);
-
 // --------------------------------------------------------------------------
 
 #endif // APP_MAIN_H

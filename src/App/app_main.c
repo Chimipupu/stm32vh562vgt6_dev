@@ -7,9 +7,33 @@
  * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  */
 
+// ST Lib
+#include "app_freertos.h"
+
+// My Src
 #include "app_main.h"
 #include "app_util.h"
 
+// --------------------------------------------------------------------------
+// [FreeRTOS関連]
+
+// アプリメインタスク
+osThreadId_t AppMainTaskHandle;
+const osThreadAttr_t AppMainTask_Attr = {
+    .name = "AppMainTask",
+    .priority = (osPriority_t) osPriorityHigh,
+    .stack_size = 256 * 4
+};
+static void _AppMainTask(void *p_args);
+
+// UARTデバッグコマンドタスク
+osThreadId_t DbgCmdTaskHandle;
+const osThreadAttr_t DbgCmdTask_Attr = {
+    .name = "DbgCmdTask",
+    .priority = (osPriority_t) osPriorityNormal,
+    .stack_size = 256 * 4
+};
+static void _DbgCmdTask(void *p_args);
 // --------------------------------------------------------------------------
 static void _rtc_update(void);
 
@@ -21,6 +45,28 @@ static bool _mcu_test(void);
 #endif // DBG_APP
 // --------------------------------------------------------------------------
 // [Static]
+
+static void _AppMainTask(void *p_args)
+{
+    printf("[AppMainTask]: Init\r\n");
+
+    while (1)
+    {
+        HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
+        osDelay(100);
+    }
+}
+
+static void _DbgCmdTask(void *p_args)
+{
+    printf("[DbgCmdTask]: Init\r\n");
+
+    while (1)
+    {
+        _rtc_update(); // RTC更新
+        osDelay(500);
+    }
+}
 
 static void _rtc_update(void)
 {
@@ -71,6 +117,9 @@ static bool _mcu_test(void)
 }
 #endif // DBG_APP
 
+// --------------------------------------------------------------------------
+// [App]
+
 void app_main_init(void)
 {
     printf("STM32H562VGT6 Develop by Chimipupu\r\n");
@@ -78,11 +127,11 @@ void app_main_init(void)
 #ifdef DBG_APP
     _mcu_test();
 #endif // DBG_APP
-}
 
-void app_main(void)
-{
-    printf("[TaskAppMain]: 1000ms proc\r\n");
-    HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
-    _rtc_update(); // RTC更新
+    // アプリのメイン用のFreeRTOSタスクを生成
+    AppMainTaskHandle = osThreadNew(_AppMainTask, NULL, &AppMainTask_Attr);
+
+    // UARTデバッグコマンドタスク用のFreeRTOSタスクを生成
+    DbgCmdTaskHandle = osThreadNew(_DbgCmdTask, NULL, &DbgCmdTask_Attr);
 }
+// --------------------------------------------------------------------------
