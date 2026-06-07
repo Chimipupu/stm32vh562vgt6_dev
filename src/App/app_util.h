@@ -3,7 +3,7 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief アプリユーティリティ
  * @version 0.1
- * @date 2026-06-04
+ * @date 2026-06-07
  * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  */
 

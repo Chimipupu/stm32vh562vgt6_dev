@@ -40,7 +40,8 @@ ENTRY(Reset_Handler)
 MEMORY
 {
   RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 640K
-  FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 2048K
+  FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 1024K
+  BK_SRAM (xrw) : ORIGIN = 0x40036400,  LENGTH = 4K
 }
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
@@ -213,6 +214,13 @@ SECTIONS
   PROVIDE( __bss_start = __tbss_start );
   PROVIDE( __bss_size = __bss_end - __bss_start );
 
+  /* Backup SRAM section */
+  .bk_sram (NOLOAD) :
+  {
+    . = ALIGN(4);
+    *(.bk_sram)
+    . = ALIGN(4);
+  } >BK_SRAM
 
   /* User_heap_stack section, used to check that there is enough "RAM" Ram  type memory left */
   ._user_heap_stack (NOLOAD) :

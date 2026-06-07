@@ -67,13 +67,6 @@ void MX_FREERTOS_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-// printf()をUARTにポーティング
-int __io_putchar(int ch)
-{
-  HAL_UART_Transmit(&hlpuart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
-  return ch;
-}
-
 /* USER CODE END 0 */
 
 /**
@@ -116,9 +109,6 @@ int main(void)
   MX_RNG_Init();
   MX_LPUART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
-  // printf()をUARTにポーティング
-  setbuf(stdout, NULL);
 
   /* USER CODE END 2 */
 

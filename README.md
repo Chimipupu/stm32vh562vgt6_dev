@@ -6,8 +6,10 @@
   - CPU: ARM Cortex-M33
   - FPU: 単精度FPU
   - Clock: 250MHz
-  - Flash: 2MB
-  - SRAM: 640KB
+  - Flash: 1MB
+  - SRAM: 計 644KB
+    - SRAM(1~3): 640KB
+    - BKPSRAM(バックアップ用): 4KB
 - OS
   - FreeRTOS (CMSIS RTOS 2)
 - コンパイラ: Clang (`st-arm-clang 19.1.6`) 
@@ -29,11 +31,11 @@
 
 ```shell
 [build] Memory region         Used Size  Region Size  %age Used
-[build]              RAM:       13872 B       640 KB      2.12%
-[build]            FLASH:       35120 B         2 MB      1.67%
+[build]              RAM:       13968 B       640 KB      2.13%
+[build]            FLASH:       34232 B         1 MB      3.26%
+[build]          BK_SRAM:           4 B         4 KB      0.10%
 ```
 
 ## ピンアサイン
 
 ![alt text](doc/STM32H562VGT6_CubeMXピン設定_20260607.png)
-

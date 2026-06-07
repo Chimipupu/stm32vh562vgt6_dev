@@ -3,7 +3,7 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief アプリメインのヘッダ
  * @version 0.1
- * @date 2026-06-04
+ * @date 2026-06-07
  * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.
  */
 
@@ -20,36 +20,34 @@
 
 // ST Lib
 #include "main.h"
-#include "gpdma.h"
+#include "cmsis_os2.h"
+#include "cordic.h"
+#include "crc.h"
+#include "i2c.h"
 #include "icache.h"
+#include "usart.h"
+#include "rng.h"
 #include "rtc.h"
+#include "spi.h"
 #include "gpio.h"
 
 // MyApp Lib
 
 // --------------------------------------------------------------------------
 // [コンパイルスイッチ]
-#define DBG_APP
+// #define DBG_APP
 
 // --------------------------------------------------------------------------
 // [Define]
-#ifndef KEY_Pin
-#define KEY_Pin GPIO_PIN_13
-#endif
-#ifndef KEY_GPIO_Port
-#define KEY_GPIO_Port GPIOC
-#endif
-#ifndef LED_Pin
-#define LED_Pin GPIO_PIN_2
-#endif
-#ifndef LED_GPIO_Port
-#define LED_GPIO_Port GPIOB
-#endif
+
 // --------------------------------------------------------------------------
 // [FreeRTOS関連]
 extern osThreadId_t AppMainTaskHandle;
 extern const osThreadAttr_t AppMainTask_Attr;
 // --------------------------------------------------------------------------
+void DBG_LPUART_PRINTF(const char *format, ...);
+bool dbg_cmd_ready(uint8_t *p_cmd_buf);
+void lpuart1_irq_handler(void);
 void app_main_init(void);
 // --------------------------------------------------------------------------
 
