@@ -32,7 +32,7 @@
 ```shell
 [build] Memory region         Used Size  Region Size  %age Used
 [build]              RAM:       13968 B       640 KB      2.13%
-[build]            FLASH:       34480 B         1 MB      3.29%
+[build]            FLASH:       34412 B         1 MB      3.28%
 [build]          BK_SRAM:           4 B         4 KB      0.10%
 ```
 

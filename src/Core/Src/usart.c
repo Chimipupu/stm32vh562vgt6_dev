@@ -89,6 +89,9 @@ void MX_LPUART1_UART_Init(void)
   LL_LPUART_Enable(LPUART1);
   /* USER CODE BEGIN LPUART1_Init 2 */
 
+  // LPUART 受信割り込み(RXNE) 有効
+  LL_LPUART_EnableIT_RXNE(LPUART1);
+
   /* USER CODE END LPUART1_Init 2 */
 
 }

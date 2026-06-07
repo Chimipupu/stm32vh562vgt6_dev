@@ -51,10 +51,6 @@ static volatile uint8_t s_lpuart_rx_buf[LPUART_RX_BUF_SIZE];
 static uint8_t s_rx_buf_idx = 0;
 
 static void _rtc_update(void);
-
-#ifdef DBG_APP
-
-#endif // DBG_APP
 // --------------------------------------------------------------------------
 // [Static]
 
@@ -68,15 +64,13 @@ static void _rtc_update(void)
     HAL_RTC_GetDate(&hrtc, &sdatestructureget, RTC_FORMAT_BIN);
     if(s_prev_seconds != stimestructureget.Seconds) {
         s_prev_seconds  = stimestructureget.Seconds;
+#ifdef PRINT_RTC_UPDATE
         DBG_LPUART_PRINTF("RTC: 20%02d/%02d/%02d %02d:%02d:%02d\r\n",
                 sdatestructureget.Year,sdatestructureget.Month,sdatestructureget.Date, \
                 stimestructureget.Hours,stimestructureget.Minutes,stimestructureget.Seconds);
+#endif // PRINT_RTC_UPDATE
     }
 }
-
-#ifdef DBG_APP
-
-#endif // DBG_APP
 
 static void _AppMainTask(void *p_args)
 {
@@ -90,14 +84,14 @@ static void _AppMainTask(void *p_args)
     {
         HAL_GPIO_TogglePin(PCB_LED_PORT, PCB_LED_PIN);
         _rtc_update(); // RTC更新
-        osDelay(100);
+        osDelay(20);
     }
 }
 
 static void _DbgCmdTask(void *p_args)
 {
     bool ret;
-    uint8_t cmd_buf[64] = {0};
+    uint8_t cmd_buf[256] = {0};
 
     DBG_LPUART_PRINTF("[DbgCmdTask]: Init\r\n");
 
@@ -109,7 +103,7 @@ static void _DbgCmdTask(void *p_args)
             memset(&cmd_buf[0], 0x00, sizeof(cmd_buf));
         }
 
-        osDelay(300);
+        osDelay(100);
     }
 }
 
@@ -186,10 +180,6 @@ void lpuart1_irq_handler(void)
 void app_main_init(void)
 {
     DBG_LPUART_PRINTF("STM32H562VGT6 Develop by Chimipupu\r\n");
-
-#ifdef DBG_APP
-    _mcu_test();
-#endif // DBG_APP
 
     // アプリのメイン用のFreeRTOSタスクを生成
     AppMainTaskHandle = osThreadNew(_AppMainTask, NULL, &AppMainTask_Attr);
