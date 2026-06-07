@@ -11,7 +11,6 @@
 #include "app_util.h"
 
 // --------------------------------------------------------------------------
-static uint32_t s_tick;
 static void _rtc_update(void);
 
 #ifdef DBG_APP
@@ -74,8 +73,6 @@ static bool _mcu_test(void)
 
 void app_main_init(void)
 {
-    s_tick = HAL_GetTick();
-
     printf("STM32H562VGT6 Develop by Chimipupu\r\n");
 
 #ifdef DBG_APP
@@ -85,12 +82,7 @@ void app_main_init(void)
 
 void app_main(void)
 {
-    s_tick = HAL_GetTick();
-
-    // 1000ms周期処理
-    if(s_tick >= 1000) {
-        _rtc_update(); // RTC更新
-
-        HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
-    }
+    printf("[TaskAppMain]: 1000ms proc\r\n");
+    HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
+    _rtc_update(); // RTC更新
 }

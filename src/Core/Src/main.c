@@ -18,17 +18,17 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os2.h"
 #include "cordic.h"
 #include "crc.h"
 #include "dcache.h"
 #include "gpdma.h"
 #include "i2c.h"
 #include "icache.h"
+#include "usart.h"
 #include "rng.h"
 #include "rtc.h"
 #include "spi.h"
-#include "stm32h5xx_hal.h"
-#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -59,6 +59,7 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -69,7 +70,7 @@ void SystemClock_Config(void);
 // printf()をUARTにポーティング
 int __io_putchar(int ch)
 {
-  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+  HAL_UART_Transmit(&hlpuart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
   return ch;
 }
 
@@ -109,18 +110,27 @@ int main(void)
   MX_ICACHE_Init();
   MX_I2C1_Init();
   MX_SPI6_Init();
-  MX_USART1_UART_Init();
   MX_CORDIC_Init();
   MX_CRC_Init();
   MX_DCACHE1_Init();
   MX_RNG_Init();
+  MX_LPUART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
   // printf()をUARTにポーティング
   setbuf(stdout, NULL);
-  app_main_init();
 
   /* USER CODE END 2 */
+
+  /* Init scheduler */
+  osKernelInitialize();
+  /* Call init function for freertos objects (in app_freertos.c) */
+  MX_FREERTOS_Init();
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -130,7 +140,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    app_main();
   }
   /* USER CODE END 3 */
 }
