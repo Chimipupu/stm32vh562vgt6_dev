@@ -16,7 +16,6 @@ set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Device/ST/STM32H5xx/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/../../App
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Bsp
 )
 
 # STM32CubeMX generated application sources
@@ -37,7 +36,6 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/stm32h5xx_hal_msp.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/sysmem.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/syscalls.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Bsp/board.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../APP/app_main.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../startup_stm32h562xx.s
 )

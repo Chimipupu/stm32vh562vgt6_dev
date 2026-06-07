@@ -27,12 +27,12 @@
 #include "rng.h"
 #include "rtc.h"
 #include "spi.h"
+#include "stm32h5xx_hal.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "board.h"
 #include "app_main.h"
 /* USER CODE END Includes */
 
@@ -118,9 +118,6 @@ int main(void)
 
   // printf()をUARTにポーティング
   setbuf(stdout, NULL);
-
-	board_led_init();
-	board_button_init();
   app_main_init();
 
   /* USER CODE END 2 */
@@ -130,10 +127,10 @@ int main(void)
 
   while (1)
   {
-    app_main();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    app_main();
   }
   /* USER CODE END 3 */
 }

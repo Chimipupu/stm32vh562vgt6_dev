@@ -11,8 +11,8 @@
 #include "app_util.h"
 
 // --------------------------------------------------------------------------
-static uint32_t s_tick_button;
 static uint32_t s_tick;
+static void _rtc_update(void);
 
 #ifdef DBG_APP
 static const uint32_t g_ref_val = 0x12345678;
@@ -20,9 +20,24 @@ static const uint32_t g_rev_exp_val = 0x78563412;
 static const uint32_t g_rev16_exp_val = 0x34127856;
 static bool _mcu_test(void);
 #endif // DBG_APP
-
 // --------------------------------------------------------------------------
 // [Static]
+
+static void _rtc_update(void)
+{
+    RTC_DateTypeDef sdatestructureget;
+    RTC_TimeTypeDef stimestructureget;
+    static uint8_t s_prev_seconds;
+
+    HAL_RTC_GetTime(&hrtc, &stimestructureget, RTC_FORMAT_BIN);
+    HAL_RTC_GetDate(&hrtc, &sdatestructureget, RTC_FORMAT_BIN);
+    if(s_prev_seconds != stimestructureget.Seconds) {
+        s_prev_seconds  = stimestructureget.Seconds;
+        printf("RTC: 20%02d/%02d/%02d %02d:%02d:%02d\r\n",
+                sdatestructureget.Year,sdatestructureget.Month,sdatestructureget.Date, \
+                stimestructureget.Hours,stimestructureget.Minutes,stimestructureget.Seconds);
+    }
+}
 
 #ifdef DBG_APP
 static bool _mcu_test(void)
@@ -70,38 +85,12 @@ void app_main_init(void)
 
 void app_main(void)
 {
-    RTC_DateTypeDef sdatestructureget;
-    RTC_TimeTypeDef stimestructureget;
-    static uint8_t s_prev_seconds ;
-
     s_tick = HAL_GetTick();
 
-    // 基板のボタンをポーリング(100ms周期)
-    if(s_tick >= s_tick_button) {
-        if(board_button_getstate()) {
-            s_tick_button = s_tick + 100;
-            board_led_toggle();
-            printf("Key Pressed\r\n");
-        }
-        // 500ms毎にRTCを更新
-        else {
-            s_tick_button = s_tick + 500;
+    // 1000ms周期処理
+    if(s_tick >= 1000) {
+        _rtc_update(); // RTC更新
 
-            /* Get the RTC current Time */
-            HAL_RTC_GetTime(&hrtc, &stimestructureget, RTC_FORMAT_BIN);
-            /* Get the RTC current Date */
-            HAL_RTC_GetDate(&hrtc, &sdatestructureget, RTC_FORMAT_BIN);
-
-            // 1秒おきにRTCの時刻を表示
-            if(s_prev_seconds != stimestructureget.Seconds) {
-                s_prev_seconds  = stimestructureget.Seconds;
-                board_led_set(1);
-                printf("RTC: 20%02d/%02d/%02d %02d:%02d:%02d\r\n",
-                       sdatestructureget.Year,sdatestructureget.Month,sdatestructureget.Date, \
-                       stimestructureget.Hours,stimestructureget.Minutes,stimestructureget.Seconds);
-            } else {
-                board_led_set(0);
-            }
-        }
+        HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
     }
 }

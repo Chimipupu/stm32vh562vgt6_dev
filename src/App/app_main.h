@@ -19,20 +19,31 @@
 #include <math.h>
 
 // ST Lib
-
-// BSP
 #include "main.h"
 #include "gpdma.h"
 #include "icache.h"
 #include "rtc.h"
 #include "gpio.h"
-#include "board.h"
 
 // MyApp Lib
 
 // --------------------------------------------------------------------------
 // [コンパイルスイッチ]
 #define DBG_APP
+
+// --------------------------------------------------------------------------
+#ifndef KEY_Pin
+#define KEY_Pin GPIO_PIN_13
+#endif
+#ifndef KEY_GPIO_Port
+#define KEY_GPIO_Port GPIOC
+#endif
+#ifndef LED_Pin
+#define LED_Pin GPIO_PIN_2
+#endif
+#ifndef LED_GPIO_Port
+#define LED_GPIO_Port GPIOB
+#endif
 
 // --------------------------------------------------------------------------
 void app_main_init(void);
