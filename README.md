@@ -1,8 +1,8 @@
-# STM32G0B1CBT6 評価F/W開発
+# STM32H562VGT6 評価F/W開発
 
 ## 開発環境
 
-- マイコン: `STM32G0B1CBT6`
+- マイコン: `STM32H562VGT6`
   - CPU: ARM Cortex-M33
   - FPU: 単精度FPU
   - Clock: 250MHz
