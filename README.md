@@ -12,7 +12,7 @@
     - BKPSRAM(バックアップ用): 4KB
 - OS
   - FreeRTOS (CMSIS RTOS 2)
-- コンパイラ: Clang (`st-arm-clang 19.1.6`) 
+- コンパイラ: Clang (`st-arm-clang 19.1.6`)
   - 最適化: debug
 - ツールチェイン
   - CMake
@@ -31,8 +31,8 @@
 
 ```shell
 [build] Memory region         Used Size  Region Size  %age Used
-[build]              RAM:       13968 B       640 KB      2.13%
-[build]            FLASH:       34412 B         1 MB      3.28%
+[build]              RAM:       13784 B       640 KB      2.10%
+[build]            FLASH:       32492 B         1 MB      3.10%
 [build]          BK_SRAM:           4 B         4 KB      0.10%
 ```
 

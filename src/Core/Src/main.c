@@ -22,7 +22,6 @@
 #include "cordic.h"
 #include "crc.h"
 #include "dcache.h"
-#include "gpdma.h"
 #include "i2c.h"
 #include "icache.h"
 #include "usart.h"
@@ -98,7 +97,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_GPDMA1_Init();
   MX_RTC_Init();
   MX_ICACHE_Init();
   MX_I2C1_Init();
