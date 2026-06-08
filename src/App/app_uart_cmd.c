@@ -17,9 +17,10 @@
 // --------------------------------------------------------------------------
 #define LPUART_RX_BUF_SIZE    128
 static volatile uint8_t s_lpuart_rx_buf[LPUART_RX_BUF_SIZE];
+static uint8_t s_rx_buf_idx = 0;
+
 #define UART_CMD_RX_BUF_SIZE    64
 static volatile uint8_t s_uart_cmd_rx_buf[UART_CMD_RX_BUF_SIZE];
-static uint8_t s_rx_buf_idx = 0;
 static bool s_rx_uart_cmd_flg = false;
 
 E_APP_UART_CMD_RESULT _cmd_help(void *p_args);
@@ -35,7 +36,6 @@ static uint8_t s_cmd_num;
 static uint8_t s_rx_cmd_no;
 static app_uart_cmd_config_t s_cmd_config;
 bool _cmd_ready(uint8_t *p_cmd_buf);
-E_APP_UART_CMD_RESULT _cmd_exec(E_APP_UART_CMD_TYPE cmd_type, uint8_t cmd_no, void *p_cmd_args);
 // --------------------------------------------------------------------------
 // [Static]
 
@@ -72,53 +72,16 @@ bool _cmd_ready(uint8_t *p_cmd_buf)
         p_tbl++;
     }
 
+    // 知らんコマンドなので「?」を返す
+    if(ret == false) {
+        DBG_LPUART_PRINTF("?\r\n");
+    }
+
     // 変数初期化
     memset((void *)&s_lpuart_rx_buf[0], 0x00, LPUART_RX_BUF_SIZE);
+    memset((void *) &s_uart_cmd_rx_buf[0], 0x00, UART_CMD_RX_BUF_SIZE);
     s_rx_buf_idx = 0;
     s_rx_uart_cmd_flg = false;
-
-    return ret;
-}
-
-E_APP_UART_CMD_RESULT _cmd_exec(E_APP_UART_CMD_TYPE cmd_type, uint8_t cmd_no, void *p_cmd_args)
-{
-    E_APP_UART_CMD_RESULT ret = CMD_RESULT_NONE;
-
-    // 基本コマンドの実行
-    if(cmd_type == CMD_TYPE_BASIC) {
-        if(cmd_no >= BASIC_CMD_NUM) {
-            return CMD_RESULT_ARGS_ERROR;
-        }
-
-        if(s_basic_cmd_tbl[cmd_no].pfunc == NULL) {
-            return CMD_RESULT_UNKNOWN_ERROR;
-        }
-
-        ret = s_basic_cmd_tbl[cmd_no].pfunc(p_cmd_args);
-    }
-    // 拡張コマンドの実行
-    else if(cmd_type == CMD_TYPE_EXT) {
-        // 引数のヌルポをチェック
-        if(s_cmd_config.p_ext_cmd_tbl == NULL) {
-            return CMD_RESULT_ARGS_ERROR;
-        }
-
-        // 拡張コマンド番号の範囲チェック
-        if(cmd_no >= s_cmd_config.ext_cmd_num) {
-            return CMD_RESULT_ARGS_ERROR;
-        }
-
-        // 拡張コマンドテーブルからコマンド情報を取得
-        app_uart_cmd_tbl_t *p_cmd_info = &s_cmd_config.p_ext_cmd_tbl[cmd_no];
-
-        // 拡張コマンドのコールバック関数がNULLでないかチェック
-        if(p_cmd_info->pfunc == NULL) {
-            return CMD_RESULT_UNKNOWN_ERROR;
-        }
-
-        // 拡張コマンドのコールバック関数を呼び出す
-        ret = p_cmd_info->pfunc(p_cmd_args);
-    }
 
     return ret;
 }
@@ -210,10 +173,9 @@ void app_uart_cmd_main(void)
         ret = _cmd_ready((uint8_t *) &s_uart_cmd_rx_buf[0]);
         if (ret != false) {
             // コマンド実行
-            _cmd_exec(s_cmd_type, s_rx_cmd_no, (void *) &s_uart_cmd_rx_buf[0]);
-
-            // バッファ初期化
-            memset((void *) &s_uart_cmd_rx_buf[0], 0x00, sizeof(s_uart_cmd_rx_buf));
+            if(ps_cmd_tbl[s_rx_cmd_no].pfunc != NULL) {
+                ps_cmd_tbl[s_rx_cmd_no].pfunc(NULL);
+            }
         }
     }
 }
