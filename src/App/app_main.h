@@ -1,7 +1,7 @@
 /**
  * @file app_main.h
  * @author Chimipupu(https://github.com/Chimipupu)
- * @brief アプリメインのヘッダ
+ * @brief アプリメイン (for STM32H562VGT6)
  * @version 0.1
  * @date 2026-06-07
  * @copyright Copyright (c) 2026 Chimipupu All Rights Reserved.

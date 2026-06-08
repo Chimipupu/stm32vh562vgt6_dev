@@ -20,7 +20,6 @@ set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Middlewares/Third_Party/CMSIS/RTOS2/Include/
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../App
 )
 
 # STM32CubeMX generated application sources
@@ -31,7 +30,6 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/cordic.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/crc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/dcache.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/gpdma.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/i2c.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/icache.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/usart.c
@@ -42,7 +40,6 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/stm32h5xx_hal_msp.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/sysmem.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/syscalls.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../APP/app_main.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../startup_stm32h562xx.s
 )
 
@@ -108,7 +105,8 @@ set(MX_LINK_DIRS
 set(MX_LINK_LIBS 
     STM32_Drivers
     ${TOOLCHAIN_LINK_LIBRARIES}
-    RTOS2	
+    RTOS2
+	
 )
 # Interface library for includes and symbols
 add_library(stm32cubemx INTERFACE)
