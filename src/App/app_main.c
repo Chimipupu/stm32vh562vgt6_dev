@@ -163,10 +163,12 @@ void lpuart1_irq_handler(void)
 {
     uint8_t tmp;
 
+#if 0
     // ORE （オーバーランエラー）
     if (LL_LPUART_IsActiveFlag_ORE(LPUART1)) {
         LL_LPUART_ClearFlag_ORE(LPUART1);
     }
+#endif
 
     /**
     * @brief RXFNE (Receive FIFO Not Empty) をチェック
