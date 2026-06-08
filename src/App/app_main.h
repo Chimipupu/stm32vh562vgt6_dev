@@ -46,8 +46,6 @@ extern osThreadId_t AppMainTaskHandle;
 extern const osThreadAttr_t AppMainTask_Attr;
 // --------------------------------------------------------------------------
 void DBG_LPUART_PRINTF(const char *format, ...);
-bool dbg_cmd_ready(uint8_t *p_cmd_buf);
-void lpuart1_irq_handler(void);
 void app_main_init(void);
 // --------------------------------------------------------------------------
 
